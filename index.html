@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Finans V27 (Rafine)</title>
+    <title>Finans V26 (All-in-One)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,110 +15,119 @@
 
         body { background-color: var(--bg-color); color: var(--text-color); font-family: 'Plus Jakarta Sans', sans-serif; padding-bottom: 90px; transition: 0.3s; }
 
-        /* V25 STİLİ HEADER */
-        .header-bg { background: linear-gradient(135deg, var(--primary), var(--secondary)); padding: 20px 20px 35px 20px; border-radius: 0 0 40px 40px; color: white; box-shadow: 0 15px 40px -10px rgba(79, 70, 229, 0.4); margin-bottom: 25px; }
-        .total-balance { font-size: 3.2rem; font-weight: 800; letter-spacing: -2px; }
+        .header-bg { background: linear-gradient(135deg, var(--primary), var(--secondary)); padding: 20px 20px 30px 20px; border-radius: 0 0 35px 35px; color: white; box-shadow: 0 15px 40px -10px rgba(79, 70, 229, 0.4); }
+        .total-balance { font-size: 2.8rem; font-weight: 800; letter-spacing: -1.5px; }
         
-        /* KARTLAR */
-        .stat-box { background: rgba(255,255,255,0.1); border-radius: 18px; padding: 12px 20px; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); }
-        .tx-list-item { background: var(--card-bg); border-radius: 20px; padding: 15px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border-color); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); }
-        
-        /* ALT NAV (V25 SİMETRİSİ) */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card-bg); height: 80px; display: flex; justify-content: space-around; align-items: center; border-radius: 30px 30px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 900; border-top: 1px solid var(--border-color); }
-        .nav-btn { font-size: 1.6rem; color: var(--text-muted); background: none; border: none; transition: 0.3s; }
-        .nav-btn.active { color: var(--primary); transform: translateY(-3px); }
-        .fab-main { width: 65px; height: 65px; background: var(--text-color); color: var(--card-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; position: relative; top: -30px; border: 6px solid var(--bg-color); box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
+        /* BORÇ KARTLARI */
+        .debt-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+        .debt-val { font-weight: 800; }
+        .debt-give { color: #ef4444; } /* Alacak */
+        .debt-take { color: #10b981; } /* Borç */
 
-        /* MODAL & INPUT */
-        .modal-content { border-radius: 30px; border: none; background: var(--card-bg); }
-        .form-control, .form-select { border-radius: 15px; padding: 12px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color); }
+        /* FOTOĞRAF ÖNİZLEME */
+        .receipt-preview { width: 100%; max-height: 200px; object-fit: contain; border-radius: 12px; margin-top: 10px; border: 1px solid var(--border-color); display: none; }
+        .tx-img-thumb { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; cursor: pointer; }
+
+        /* NAV & GENEL */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card-bg); height: 75px; display: flex; justify-content: space-around; align-items: center; border-radius: 25px 25px 0 0; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 900; border-top: 1px solid var(--border-color); }
+        .nav-btn { font-size: 1.4rem; color: var(--text-muted); background: none; border: none; padding: 10px; }
+        .nav-btn.active { color: var(--primary); }
+        .fab-main { width: 60px; height: 60px; background: var(--text-color); color: var(--card-bg); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; position: relative; top: -25px; border: 5px solid var(--bg-color); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
         
-        .page { display: none; } .page.active { display: block; }
-        .img-badge { width: 35px; height: 35px; border-radius: 10px; object-fit: cover; cursor: pointer; border: 1px solid var(--border-color); }
+        .page { display: none; padding-top: 20px; } .page.active { display: block; }
+        .tx-list-item { background: var(--card-bg); border-radius: 16px; padding: 12px 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border-color); }
+        
+        .stat-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+        .progress { height: 8px; border-radius: 4px; background: var(--bg-color); }
     </style>
 </head>
 <body>
 
 <div id="mainHeader" class="header-bg">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <button class="btn text-white p-0 fs-3" onclick="settingsModal.show()"><i class="bi bi-gear-wide-connected"></i></button>
-        <div class="fw-bold small letter-spacing-2">FINANS PRO V27</div>
-        <button class="btn text-white p-0 fs-3" onclick="toggleTheme()"><i id="themeIcon" class="bi bi-moon-stars-fill"></i></button>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <button class="btn text-white p-0 fs-4" onclick="settingsModal.show()"><i class="bi bi-list"></i></button>
+        <div class="fw-bold small opacity-75">V26 ALL-IN-ONE</div>
+        <button class="btn text-white p-0 fs-4" onclick="toggleTheme()"><i id="themeIcon" class="bi bi-moon-stars-fill"></i></button>
     </div>
     <div class="text-center">
-        <div class="small fw-bold opacity-75 mb-1">TOPLAM VARLIK</div>
+        <div class="small fw-bold opacity-75">TOPLAM BAKİYE</div>
         <div class="total-balance" id="dispNet">0.00 ₺</div>
-        
-        <div class="mt-4 d-flex justify-content-center gap-3 px-2">
-            <div class="stat-box flex-fill text-start">
-                <div class="small opacity-75 fw-bold mb-1">GELİR</div>
-                <div class="fw-bold fs-5 text-white"><i class="bi bi-arrow-down-left-circle-fill me-1"></i> <span id="dispInc">0</span></div>
-            </div>
-            <div class="stat-box flex-fill text-start">
-                <div class="small opacity-75 fw-bold mb-1">GİDER</div>
-                <div class="fw-bold fs-5 text-white"><i class="bi bi-arrow-up-right-circle-fill me-1"></i> <span id="dispExp">0</span></div>
-            </div>
+        <div class="d-flex justify-content-center gap-3 mt-3">
+            <div class="small fw-bold px-3 py-1 rounded-pill" style="background: rgba(255,255,255,0.15)">Gelir: <span id="dispInc">0</span></div>
+            <div class="small fw-bold px-3 py-1 rounded-pill" style="background: rgba(255,255,255,0.15)">Gider: <span id="dispExp">0</span></div>
         </div>
     </div>
 </div>
 
 <div id="homePage" class="page active container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h6 class="fw-bold text-muted small m-0">SON HAREKETLER</h6>
-        <i class="bi bi-filter-right fs-4 text-muted"></i>
-    </div>
+    <h6 class="fw-bold text-muted small mb-3">SON İŞLEMLER</h6>
     <div id="recentList" class="pb-5"></div>
 </div>
 
-<div id="calendarPage" class="page container">
-    <h4 class="fw-bold mb-4">Takvim</h4>
-    <select id="calMonth" class="form-select mb-4 fw-bold" onchange="renderCalendar()"></select>
-    <div id="calGrid" style="display:grid; grid-template-columns:repeat(7, 1fr); gap:8px; text-align:center;"></div>
-    <div id="dayDetail" class="mt-4 p-3 rounded-4 bg-white border d-none"></div>
+<div id="analysisPage" class="page container">
+    <h4 class="fw-bold mb-4">Finansal Özet</h4>
+    <div class="stat-card">
+        <h6 class="fw-bold text-muted mb-3">BU YILIN ÖZETİ (2026)</h6>
+        <div id="yearlyStats"></div>
+    </div>
+    <h6 class="fw-bold text-muted mb-3">KATEGORİ DAĞILIMI</h6>
+    <div id="catAnalysisList" class="pb-5"></div>
+</div>
+
+<div id="debtPage" class="page container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold m-0">Borç / Alacak</h4>
+        <button class="btn btn-primary rounded-pill px-3 fw-bold" onclick="debtModal.show()">+ Ekle</button>
+    </div>
+    <div id="debtList" class="pb-5"></div>
+</div>
+
+<div id="morePage" class="page container">
+    <h4 class="fw-bold mb-4">Araçlar</h4>
+    <div class="d-grid gap-3">
+        <button class="btn btn-light p-3 text-start fw-bold border" onclick="createPDF()"><i class="bi bi-file-pdf text-danger me-2"></i> PDF Raporu Oluştur</button>
+        <button class="btn btn-light p-3 text-start fw-bold border" onclick="excelExport()"><i class="bi bi-file-earmark-excel text-success me-2"></i> Excel Olarak İndir</button>
+        <button class="btn btn-light p-3 text-start fw-bold border" onclick="openSubsModal()"><i class="bi bi-arrow-repeat text-primary me-2"></i> Abonelik Yönetimi</button>
+        <button class="btn btn-outline-danger p-3 fw-bold" onclick="resetData()">Verileri Sıfırla</button>
+    </div>
 </div>
 
 <div class="bottom-nav">
     <button class="nav-btn active" onclick="goPage('homePage', this)"><i class="bi bi-house-door-fill"></i></button>
-    <button class="nav-btn" onclick="goPage('calendarPage', this)"><i class="bi bi-calendar2-week-fill"></i></button>
+    <button class="nav-btn" onclick="goPage('analysisPage', this)"><i class="bi bi-pie-chart-fill"></i></button>
     <div class="fab-main" onclick="menuModal.show()"><i class="bi bi-plus-lg"></i></div>
-    <button class="nav-btn" onclick="openDebtModal()"><i class="bi bi-people-fill"></i></button>
-    <button class="nav-btn" onclick="goPage('homePage', this)"><i class="bi bi-pie-chart-fill"></i></button>
+    <button class="nav-btn" onclick="goPage('debtPage', this)"><i class="bi bi-people-fill"></i></button>
+    <button class="nav-btn" onclick="goPage('morePage', this)"><i class="bi bi-three-dots"></i></button>
 </div>
 
-<div class="modal fade" id="txModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header border-0 pb-0"><h5 class="fw-bold" id="txTitle">İşlem</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+<div class="modal fade" id="menuModal"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content p-3 border-0 shadow-lg" style="border-radius: 25px;"><h6 class="text-center text-muted fw-bold mb-3">İŞLEM TÜRÜ</h6><div class="d-grid gap-2"><button class="btn btn-success p-3 fw-bold" onclick="openTx('gelir')">GELİR EKLE</button><button class="btn btn-danger p-3 fw-bold" onclick="openTx('gider')">GİDER EKLE</button></div></div></div></div>
+
+<div class="modal fade" id="txModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content border-0" style="border-radius: 25px;"><div class="modal-header border-0 pb-0"><h5 class="fw-bold" id="txTitle">İşlem</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
     <input type="hidden" id="txType">
-    <div class="mb-3"><input type="number" id="txAmt" class="form-control fs-1 fw-bold text-primary border-0 text-center" placeholder="0.00"></div>
+    <div class="mb-3"><label class="small fw-bold text-muted">Tutar</label><input type="number" id="txAmt" class="form-control fs-2 fw-bold text-primary border-0 bg-light p-3" style="border-radius: 15px;" placeholder="0.00"></div>
     <div class="row g-2 mb-3">
-        <div class="col-8"><select id="txCat" class="form-select fw-bold"></select></div>
-        <div class="col-4">
-            <label class="btn btn-outline-secondary w-100 py-2 rounded-3"><i class="bi bi-camera"></i><input type="file" hidden onchange="previewImg(this)" accept="image/*"></label>
-        </div>
+        <div class="col-6"><label class="small fw-bold text-muted">Kategori</label><select id="txCat" class="form-select fw-bold"></select></div>
+        <div class="col-6"><label class="small fw-bold text-muted">Tarih</label><input type="date" id="txDate" class="form-control fw-bold"></div>
     </div>
-    <input type="text" id="txDesc" class="form-control mb-3" placeholder="Not ekle...">
-    <input type="date" id="txDate" class="form-control fw-bold">
-    <img id="pImg" class="mt-3 w-100 rounded-3 d-none">
-</div><div class="modal-footer border-0"><button onclick="saveTx()" class="btn btn-primary w-100 py-3 fw-bold rounded-4">KAYDET</button></div></div></div></div>
-
-<div class="modal fade" id="settingsModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header border-0"><h5 class="fw-bold">Menü</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body d-grid gap-2">
-    <button class="btn btn-light text-start p-3 fw-bold border-0 rounded-4" onclick="createPDF()"><i class="bi bi-file-pdf me-2 text-danger"></i> PDF Raporu Al</button>
-    <button class="btn btn-light text-start p-3 fw-bold border-0 rounded-4" onclick="excelExport()"><i class="bi bi-file-excel me-2 text-success"></i> Excel Raporu Al</button>
-    <button class="btn btn-light text-start p-3 fw-bold border-0 rounded-4" onclick="resetData()"><i class="bi bi-trash3 me-2 text-muted"></i> Tüm Verileri Sıfırla</button>
-</div></div></div></div>
-
-<div class="modal fade" id="debtModal"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content"><div class="modal-header border-0"><h5 class="fw-bold">Borç / Alacak Defteri</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
-    <div id="debtList" class="mb-4"></div>
-    <hr>
-    <h6 class="fw-bold mb-3">Yeni Kayıt</h6>
-    <div class="row g-2">
-        <div class="col-6"><input type="text" id="dPers" class="form-control" placeholder="Kişi"></div>
-        <div class="col-6"><input type="number" id="dAmt" class="form-control" placeholder="Tutar"></div>
+    <div class="mb-3"><label class="small fw-bold text-muted">Açıklama</label><input type="text" id="txDesc" class="form-control" placeholder="Notunuz..."></div>
+    
+    <div class="mb-3">
+        <label class="btn btn-outline-primary w-100 fw-bold py-2" style="border-radius: 12px; border-style: dashed;">
+            <i class="bi bi-camera-fill me-2"></i> Fiş/Fotoğraf Ekle
+            <input type="file" id="txFile" accept="image/*" hidden onchange="previewImage(this)">
+        </label>
+        <img id="previewImg" class="receipt-preview">
     </div>
-    <select id="dTyp" class="form-select mt-2"><option value="take">Ondan Alacağım Var</option><option value="give">Ona Borcum Var</option></select>
-    <button class="btn btn-primary w-100 mt-3 fw-bold rounded-3" onclick="saveDebt()">LİSTEYE EKLE</button>
-</div></div></div></div>
 
-<div class="modal fade" id="menuModal"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content p-3"><div class="d-grid gap-2"><button class="btn btn-success p-3 fw-bold" onclick="openTx('gelir')">GELİR</button><button class="btn btn-danger p-3 fw-bold" onclick="openTx('gider')">GİDER</button></div></div></div></div>
-<div class="modal fade" id="imgModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content bg-transparent border-0 text-center"><img id="fImg" class="w-100 rounded-4 shadow-lg"></div></div></div></div>
+</div><div class="modal-footer border-0 pt-0"><button onclick="saveTx()" class="btn btn-primary w-100 py-3 fw-bold rounded-4 shadow">İŞLEMİ KAYDET</button></div></div></div></div>
+
+<div class="modal fade" id="debtModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content" style="border-radius: 25px;"><div class="modal-header border-0"><h5 class="fw-bold">Borç / Alacak Kaydı</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+    <div class="mb-3"><label class="small fw-bold text-muted">Kişi Adı</label><input type="text" id="debtPerson" class="form-control fw-bold" placeholder="Örn: Ahmet Yılmaz"></div>
+    <div class="mb-3"><label class="small fw-bold text-muted">Tutar</label><input type="number" id="debtAmt" class="form-control fw-bold fs-4" placeholder="0.00"></div>
+    <div class="mb-3"><label class="small fw-bold text-muted">Durum</label><select id="debtType" class="form-select fw-bold"><option value="take">Ondan Alacağım Var (Alacak)</option><option value="give">Ona Borcum Var (Borç)</option></select></div>
+</div><div class="modal-footer border-0"><button onclick="saveDebt()" class="btn btn-primary w-100 fw-bold py-3 rounded-4">KAYDET</button></div></div></div></div>
+
+<div class="modal fade" id="imageModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content bg-transparent border-0 text-center"><img id="fullImg" style="width:100%; border-radius:15px; box-shadow: 0 0 30px rgba(0,0,0,0.5);"><button class="btn btn-light mt-3 fw-bold rounded-pill mx-auto" data-bs-dismiss="modal">Kapat</button></div></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
@@ -126,130 +135,219 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
 <script>
-    const DB_KEY = 'finans_v27_db';
-    let db = JSON.parse(localStorage.getItem(DB_KEY)) || { txs: [], debts: [], theme:'light', cats:{gelir:['Maaş','Satış'], gider:['Market','Yemek','Fatura','Eğlence','Diğer']} };
-    let txModal, settingsModal, debtModal, menuModal, imgModal, currentImg = null;
+    const DB_KEY = 'finans_v26_allinone';
+    let db = JSON.parse(localStorage.getItem(DB_KEY)) || { 
+        txs: [], debts: [], accs: [{id:1,name:'Nakit',bal:0}], 
+        cats: { gelir:['Maaş','Ek İş','Satış'], gider:['Market','Yemek','Ulaşım','Fatura','Eğlence','Hediye','Diğer'] },
+        theme: 'light' 
+    };
+
+    let menuModal, txModal, debtModal, imageModal;
+    let selectedImageData = null;
 
     window.onload = function() {
-        txModal = new bootstrap.Modal(document.getElementById('txModal'));
-        settingsModal = new bootstrap.Modal(document.getElementById('settingsModal'));
-        debtModal = new bootstrap.Modal(document.getElementById('debtModal'));
         menuModal = new bootstrap.Modal(document.getElementById('menuModal'));
-        imgModal = new bootstrap.Modal(document.getElementById('imgModal'));
+        txModal = new bootstrap.Modal(document.getElementById('txModal'));
+        debtModal = new bootstrap.Modal(document.getElementById('debtModal'));
+        imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+        
         applyTheme(db.theme);
-        initFilters();
         refreshAll();
     };
 
     function goPage(pid, btn) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(pid).classList.add('active');
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        if(btn) btn.classList.add('active');
-        if(pid === 'calendarPage') renderCalendar();
+        if(btn) { document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); }
+        document.getElementById('mainHeader').style.display = (pid === 'homePage') ? 'block' : 'none';
+        
+        if(pid === 'homePage') refreshAll();
+        if(pid === 'analysisPage') renderAnalysis();
+        if(pid === 'debtPage') renderDebts();
     }
 
-    function openTx(type) {
-        menuModal.hide();
-        document.getElementById('txType').value = type;
-        document.getElementById('txTitle').innerText = type === 'gelir' ? 'GELİR EKLE' : 'GİDER EKLE';
-        const c = document.getElementById('txCat'); c.innerHTML = '';
-        db.cats[type].forEach(x => c.add(new Option(x, x)));
-        document.getElementById('txAmt').value = '';
-        document.getElementById('txDate').valueAsDate = new Date();
-        document.getElementById('pImg').classList.add('d-none');
-        currentImg = null;
-        txModal.show();
-    }
-
-    function previewImg(input) {
+    // --- FOTOĞRAF İŞLEMLERİ ---
+    function previewImage(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
-            reader.onload = e => { currentImg = e.target.result; const i = document.getElementById('pImg'); i.src = currentImg; i.classList.remove('d-none'); };
+            reader.onload = function(e) {
+                selectedImageData = e.target.result;
+                const preview = document.getElementById('previewImg');
+                preview.src = selectedImageData;
+                preview.style.display = 'block';
+            }
             reader.readAsDataURL(input.files[0]);
         }
     }
 
+    function showFullImage(data) {
+        document.getElementById('fullImg').src = data;
+        imageModal.show();
+    }
+
+    // --- İŞLEM KAYIT ---
+    function openTx(type) {
+        menuModal.hide();
+        document.getElementById('txType').value = type;
+        document.getElementById('txTitle').innerText = type === 'gelir' ? 'GELİR EKLE' : 'GİDER EKLE';
+        const catSelect = document.getElementById('txCat');
+        catSelect.innerHTML = '';
+        db.cats[type].forEach(c => catSelect.add(new Option(c, c)));
+        
+        document.getElementById('txAmt').value = '';
+        document.getElementById('txDate').valueAsDate = new Date();
+        document.getElementById('txDesc').value = '';
+        document.getElementById('previewImg').style.display = 'none';
+        selectedImageData = null;
+        txModal.show();
+    }
+
     function saveTx() {
-        const a = parseFloat(document.getElementById('txAmt').value);
-        if(!a) return;
-        db.txs.push({ id: Date.now(), type: document.getElementById('txType').value, amt: a, cat: document.getElementById('txCat').value, date: document.getElementById('txDate').value, desc: document.getElementById('txDesc').value, img: currentImg });
-        saveDB(); txModal.hide(); refreshAll();
+        const amt = parseFloat(document.getElementById('txAmt').value);
+        if(!amt) return;
+        
+        const tx = {
+            id: Date.now(),
+            type: document.getElementById('txType').value,
+            amt: amt,
+            cat: document.getElementById('txCat').value,
+            date: document.getElementById('txDate').value,
+            desc: document.getElementById('txDesc').value,
+            img: selectedImageData
+        };
+        
+        db.txs.push(tx);
+        saveDB();
+        txModal.hide();
+        refreshAll();
     }
 
     function refreshAll() {
         let inc = 0, exp = 0;
         db.txs.forEach(t => { if(t.type === 'gelir') inc += t.amt; else exp += t.amt; });
+        
         document.getElementById('dispNet').innerText = (inc - exp).toFixed(2) + ' ₺';
         document.getElementById('dispInc').innerText = inc.toFixed(0);
         document.getElementById('dispExp').innerText = exp.toFixed(0);
         
-        const list = document.getElementById('recentList'); list.innerHTML = '';
-        db.txs.slice().sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 10).forEach(t => {
+        renderRecentList();
+    }
+
+    function renderRecentList() {
+        const list = document.getElementById('recentList');
+        list.innerHTML = '';
+        const sorted = db.txs.slice().sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 15);
+        
+        sorted.forEach(t => {
             const isInc = t.type === 'gelir';
-            list.innerHTML += `<div class="tx-list-item">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="rounded-4 bg-light d-flex align-items-center justify-content-center" style="width:45px; height:45px; color:var(--primary)">
-                        <i class="bi ${isInc?'bi-arrow-down-left':'bi-cart'}"></i>
+            list.innerHTML += `
+                <div class="tx-list-item">
+                    <div class="d-flex align-items-center gap-3">
+                        ${t.img ? `<img src="${t.img}" class="tx-img-thumb" onclick="showFullImage('${t.img}')">` : `<div class="bg-light rounded-3 d-flex align-items-center justify-content-center" style="width:40px; height:40px;"><i class="bi bi-tag-fill text-muted"></i></div>`}
+                        <div>
+                            <div class="fw-bold">${t.cat}</div>
+                            <small class="text-muted">${t.desc || t.date}</small>
+                        </div>
                     </div>
-                    <div><div class="fw-bold">${t.cat}</div><small class="text-muted">${t.date}</small></div>
-                </div>
-                <div class="d-flex align-items-center gap-2">
-                    ${t.img ? `<img src="${t.img}" class="img-badge" onclick="viewImg('${t.img}')">` : ''}
-                    <div class="fw-bold ${isInc?'text-success':'text-danger'}">${isInc?'+':'-'}${t.amt} ₺</div>
-                </div>
-            </div>`;
+                    <div class="fw-bold ${isInc ? 'text-success' : 'text-danger'}">${isInc ? '+' : '-'}${t.amt.toFixed(2)} ₺</div>
+                </div>`;
         });
     }
 
-    function viewImg(src) { document.getElementById('fImg').src = src; imgModal.show(); }
-    
-    function openDebtModal() { renderDebts(); debtModal.show(); }
-    function saveDebt() {
-        const p = document.getElementById('dPers').value, a = parseFloat(document.getElementById('dAmt').value);
-        if(p && a) { db.debts.push({id:Date.now(), person:p, amt:a, type:document.getElementById('dTyp').value}); saveDB(); renderDebts(); }
+    // --- ANALİZ SAYFASI ---
+    function renderAnalysis() {
+        const container = document.getElementById('yearlyStats');
+        const year = new Date().getFullYear();
+        const yearTxs = db.txs.filter(t => new Date(t.date).getFullYear() === year);
+        
+        let yInc = 0, yExp = 0;
+        yearTxs.forEach(t => { if(t.type === 'gelir') yInc += t.amt; else yExp += t.amt; });
+        
+        container.innerHTML = `
+            <div class="d-flex justify-content-between mb-2"><span>Yıllık Gelir:</span> <b class="text-success">${yInc.toLocaleString()} ₺</b></div>
+            <div class="d-flex justify-content-between mb-3"><span>Yıllık Gider:</span> <b class="text-danger">${yExp.toLocaleString()} ₺</b></div>
+            <div class="progress mb-2"><div class="progress-bar bg-primary" style="width: ${yInc > 0 ? (yExp/yInc)*100 : 0}%"></div></div>
+            <small class="text-muted">Gelirinizin %${yInc > 0 ? ((yExp/yInc)*100).toFixed(0) : 0} kadarını harcadınız.</small>
+        `;
+
+        // Kategori Bazlı
+        const catList = document.getElementById('catAnalysisList');
+        catList.innerHTML = '';
+        const cats = {};
+        yearTxs.filter(t => t.type === 'gider').forEach(t => { cats[t.cat] = (cats[t.cat] || 0) + t.amt; });
+        
+        Object.keys(cats).sort((a,b) => cats[b] - cats[a]).forEach(c => {
+            const pct = (cats[c] / yExp) * 100;
+            catList.innerHTML += `
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between small fw-bold"><span>${c}</span><span>${cats[c].toFixed(0)} ₺</span></div>
+                    <div class="progress mt-1"><div class="progress-bar" style="width: ${pct}%; background: var(--secondary)"></div></div>
+                </div>`;
+        });
     }
+
+    // --- BORÇ / ALACAK ---
     function renderDebts() {
-        const l = document.getElementById('debtList'); l.innerHTML = '';
+        const list = document.getElementById('debtList');
+        list.innerHTML = '';
         db.debts.forEach(d => {
-            l.innerHTML += `<div class="d-flex justify-content-between align-items-center p-3 mb-2 rounded-4 bg-light border">
-                <div><div class="fw-bold">${d.person}</div><small class="text-muted">${d.type==='take'?'Alacak':'Borç'}</small></div>
-                <div class="d-flex align-items-center gap-3"><b class="${d.type==='take'?'text-success':'text-danger'}">${d.amt} ₺</b><i class="bi bi-check-circle fs-4 text-muted" onclick="delDebt(${d.id})"></i></div>
-            </div>`;
+            const isTake = d.type === 'take';
+            list.innerHTML += `
+                <div class="debt-card">
+                    <div>
+                        <div class="fw-bold">${d.person}</div>
+                        <small class="${isTake ? 'text-success' : 'text-danger'} fw-bold">${isTake ? 'ALACAK' : 'BORÇ'}</small>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="debt-val fs-5 ${isTake ? 'text-success' : 'text-danger'}">${d.amt} ₺</div>
+                        <i class="bi bi-check-circle-fill text-muted fs-4" onclick="settleDebt(${d.id})"></i>
+                    </div>
+                </div>`;
         });
     }
-    function delDebt(id) { db.debts = db.debts.filter(d=>d.id!==id); saveDB(); renderDebts(); }
 
-    function renderCalendar() {
-        const grid = document.getElementById('calGrid'); grid.innerHTML = '';
-        const m = parseInt(document.getElementById('calMonth').value), y = new Date().getFullYear();
-        const days = new Date(y, m + 1, 0).getDate(), start = new Date(y, m, 1).getDay();
-        ['Pz','Pt','Sa','Ça','Pe','Cu','Ct'].forEach(d => grid.innerHTML += `<div class="small fw-bold text-muted">${d}</div>`);
-        for(let i=0; i<start; i++) grid.innerHTML += `<div></div>`;
-        for(let d=1; d<=days; d++) {
-            const dt = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-            const has = db.txs.some(t => t.date === dt);
-            grid.innerHTML += `<div onclick="showDay('${dt}')" style="height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; cursor:pointer; background:${has?'rgba(79,70,229,0.1)':'transparent'}; border:${has?'1px solid var(--primary)':'none'}">${d}</div>`;
+    function saveDebt() {
+        const person = document.getElementById('debtPerson').value;
+        const amt = parseFloat(document.getElementById('debtAmt').value);
+        if(person && amt) {
+            db.debts.push({ id: Date.now(), person: person, amt: amt, type: document.getElementById('debtType').value });
+            saveDB();
+            debtModal.hide();
+            renderDebts();
         }
     }
 
-    function showDay(dt) {
-        const l = db.txs.filter(t => t.date === dt), d = document.getElementById('dayDetail');
-        d.classList.remove('d-none'); d.innerHTML = `<h6 class="fw-bold mb-2">${dt}</h6>`;
-        l.forEach(t => d.innerHTML += `<div class="small d-flex justify-content-between"><span>${t.cat}</span><b>${t.amt}₺</b></div>`);
-        if(!l.length) d.innerHTML += `<div class="small text-muted">Kayıt yok.</div>`;
+    function settleDebt(id) {
+        if(confirm('Bu borç kapatıldı mı?')) {
+            db.debts = db.debts.filter(d => d.id !== id);
+            saveDB();
+            renderDebts();
+        }
     }
 
+    // --- SİSTEM ---
     function saveDB() { localStorage.setItem(DB_KEY, JSON.stringify(db)); }
     function toggleTheme() { db.theme = db.theme === 'light' ? 'dark' : 'light'; applyTheme(db.theme); saveDB(); }
     function applyTheme(t) { document.documentElement.setAttribute('data-theme', t); document.getElementById('themeIcon').className = t === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill'; }
-    function initFilters() {
-        const m = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
-        const s = document.getElementById('calMonth'); m.forEach((x,i) => { const o = new Option(x,i); if(i===new Date().getMonth()) o.selected=true; s.add(o); });
+    function resetData() { if(confirm('Tüm veriler silinecek! Emin misiniz?')) { localStorage.removeItem(DB_KEY); location.reload(); } }
+
+    function excelExport() {
+        const data = db.txs.map(t => ({ Tarih: t.date, Tür: t.type, Kategori: t.cat, Tutar: t.amt, Açıklama: t.desc }));
+        const ws = XLSX.utils.json_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Harcamalar");
+        XLSX.writeFile(wb, "Finans_V26_Rapor.xlsx");
     }
-    function resetData() { if(confirm('Tüm veriler silinsin mi?')) { localStorage.removeItem(DB_KEY); location.reload(); } }
-    function createPDF() { const { jsPDF } = window.jspdf; const doc = new jsPDF(); doc.text("Finans Raporu", 10, 10); doc.autoTable({ head: [['Tarih', 'Kategori', 'Tutar']], body: db.txs.map(t=>[t.date, t.cat, t.amt]) }); doc.save('Rapor.pdf'); }
-    function excelExport() { const ws = XLSX.utils.json_to_sheet(db.txs); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Data"); XLSX.writeFile(wb, "Veri.xlsx"); }
+
+    function createPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        const tr = (str) => str.replace(/ğ/g,'g').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ü/g,'u').replace(/ç/g,'c');
+        doc.text("Finans Pro V26 Raporu", 14, 15);
+        const rows = db.txs.map(t => [t.date, tr(t.cat), t.type === 'gelir' ? '+' + t.amt : '-' + t.amt, tr(t.desc || '-')]);
+        doc.autoTable({ head: [['Tarih', 'Kategori', 'Tutar', 'Aciklama']], body: rows, startY: 20 });
+        doc.save('Rapor.pdf');
+    }
 </script>
 </body>
 </html>
