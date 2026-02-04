@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Finans V28 (Vizyon)</title>
+    <title>Finans V29 (Güvenli)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -40,13 +40,13 @@
         .cal-day.has-tx { background-color: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; }
         .cal-day.active { background-color: var(--primary); color: white !important; }
 
-        /* ABONELİK KARTI (YENİ) */
+        /* ABONELİK KARTI */
         .sub-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 15px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
 
-        /* KATEGORİ KARTI (YENİ) */
+        /* KATEGORİ KARTI */
         .cat-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 10px 15px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
 
-        /* FOTOĞRAF ÖNİZLEME (YENİ) */
+        /* FOTOĞRAF ÖNİZLEME */
         .img-preview-box { width: 100%; height: 150px; border: 2px dashed var(--border-color); border-radius: 15px; display: flex; align-items: center; justify-content: center; margin-top: 10px; overflow: hidden; background: var(--input-bg); position: relative; cursor: pointer; }
         .img-preview-box img { width: 100%; height: 100%; object-fit: contain; display: none; }
         .img-icon-badge { width: 30px; height: 30px; background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--primary); }
@@ -79,7 +79,7 @@
             <button class="icon-btn" onclick="settingsModal.show()"><i class="bi bi-gear-fill"></i></button>
             <button class="icon-btn" onclick="toggleTheme()"><i id="themeIcon" class="bi bi-moon-stars-fill"></i></button>
         </div>
-        <div class="small fw-bold opacity-75">V28 VİZYON</div>
+        <div class="small fw-bold opacity-75">V29 GÜVENLİ</div>
     </div>
 
     <div class="text-center">
@@ -157,12 +157,17 @@
 
 <div class="modal fade" id="settingsModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header border-0"><h5 class="fw-bold">Ayarlar & Araçlar</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
     <h6 class="fw-bold text-primary mb-3">Yönetim</h6>
-    <button class="btn btn-light w-100 fw-bold text-start mb-2 py-3 border" onclick="openSubsModal()">🔄 Abonelik Yöneticisi <span class="badge bg-danger ms-2">Yeni</span></button>
+    <button class="btn btn-light w-100 fw-bold text-start mb-2 py-3 border" onclick="openSubsModal()">🔄 Abonelik Yöneticisi</button>
     <button class="btn btn-light w-100 fw-bold text-start mb-2 py-3 border" onclick="openCatModal()">🏷️ Kategorileri Düzenle</button>
     <hr>
     <h6 class="fw-bold text-primary mb-3">Veri & Rapor</h6>
     <button class="btn btn-outline-danger w-100 fw-bold mb-2" onclick="createPDF()">📄 PDF Raporu İndir</button>
     <button class="btn btn-outline-success w-100 fw-bold mb-2" onclick="excelExport()">📊 Excel İndir</button>
+    <hr>
+    <h6 class="fw-bold text-primary mb-3">Yedekleme (Güvenlik)</h6>
+    <button class="btn btn-dark w-100 fw-bold mb-2" onclick="backupData()">📥 Yedeği İndir (Sakla)</button>
+    <button class="btn btn-outline-dark w-100 fw-bold mb-2" onclick="triggerRestore()">📤 Yedek Yükle (Geri Getir)</button>
+    <input type="file" id="restoreInput" hidden onchange="restoreData(this)" accept=".json">
     <hr>
     <h6 class="fw-bold text-primary mb-2">Bütçe Limiti</h6>
     <div class="input-group mb-4"><input type="number" id="budgetLimitInp" class="form-control fw-bold" placeholder="Örn: 20000"><button class="btn btn-primary" onclick="saveBudget()">Kaydet</button></div>
@@ -192,13 +197,11 @@
     <div class="row g-2 mb-3"><div class="col-6"><label class="small fw-bold text-muted">Tarih</label><input type="date" id="txDate" class="form-control fw-bold"></div><div class="col-6"><label class="small fw-bold text-muted">Hesap</label><select id="txAcc" class="form-select fw-bold"></select></div></div>
     <div class="mb-3"><label class="small fw-bold text-muted">Kategori</label><select id="txCat" class="form-select fw-bold"></select></div>
     <input type="text" id="txDesc" class="form-control mb-3" placeholder="Açıklama">
-    
     <div class="img-preview-box" onclick="document.getElementById('txFile').click()">
         <span class="text-muted small fw-bold"><i class="bi bi-camera-fill fs-3 d-block text-center"></i>Fotoğraf/Fiş Ekle</span>
         <img id="previewImg">
     </div>
     <input type="file" id="txFile" accept="image/*" hidden onchange="handleImage(this)">
-
 </div><div class="modal-footer border-0 pt-0"><button onclick="saveTx()" class="btn btn-primary w-100 py-3 fw-bold rounded-4">KAYDET</button></div></div></div></div>
 
 <div class="modal fade" id="accModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header border-0"><h5 class="fw-bold">Yeni Hesap</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="text" id="newAccName" class="form-control mb-3 fw-bold" placeholder="Adı"><select id="newAccType" class="form-select mb-3"><option value="bank">Banka</option><option value="card">Kart</option><option value="cash">Nakit</option></select><input type="number" id="newAccBal" class="form-control fw-bold" placeholder="Bakiye"></div><div class="modal-footer border-0"><button onclick="addAccount()" class="btn btn-primary w-100 fw-bold">OLUŞTUR</button></div></div></div></div>
@@ -211,7 +214,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
 <script>
-    const DB_KEY = 'finans_v28_db';
+    const DB_KEY = 'finans_v29_db'; // KEY GÜNCELLENDİ
     let db = JSON.parse(localStorage.getItem(DB_KEY)) || { 
         txs: [], accs: [{id:1,name:'Nakit',type:'cash',bal:0}], 
         assets:[], shopping:[], subs:[], 
@@ -221,7 +224,7 @@
 
     let menuModal, txModal, accModal, assetModal, listModal, settingsModal, subsModal, catModal, viewImageModal;
     let currentCatEditType = 'gider';
-    let currentTxImage = null; // Fotoğraf verisi için
+    let currentTxImage = null;
 
     window.onload = function() {
         menuModal = new bootstrap.Modal(document.getElementById('menuModal'));
@@ -239,40 +242,56 @@
 
         applyTheme(db.theme);
         document.getElementById('budgetLimitInp').value = db.budget || '';
-        
-        checkNotifications(); // Bildirimleri Kontrol Et
+        checkNotifications();
         initFilters(); refreshAll();
     };
 
-    // --- BİLDİRİM SİSTEMİ ---
+    // --- YEDEKLEME SİSTEMİ (YENİ) ---
+    function backupData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "Finans_Yedek_" + new Date().toISOString().slice(0,10) + ".json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    }
+
+    function triggerRestore() { document.getElementById('restoreInput').click(); }
+
+    function restoreData(input) {
+        const file = input.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                if(data && data.txs) {
+                    if(confirm('DİKKAT! Mevcut veriler silinip yedek dosyasındaki veriler yüklenecek. Emin misin?')) {
+                        db = data;
+                        saveDB();
+                        location.reload();
+                    }
+                } else { alert('Hatalı yedek dosyası!'); }
+            } catch(err) { alert('Dosya okunamadı!'); }
+        };
+        reader.readAsText(file);
+    }
+
+    // --- BİLDİRİM & FOTOĞRAF ---
     function checkNotifications() {
         if (!("Notification" in window)) return;
-        
         const today = new Date().getDate();
         const dueSubs = db.subs.filter(s => parseInt(s.day) === today);
-
         if (dueSubs.length > 0) {
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    dueSubs.forEach(s => {
-                        new Notification("Ödeme Hatırlatması 🔔", { body: `${s.name} aboneliğinin ödeme günü geldi! (${s.amt} TL)` });
-                    });
+                    dueSubs.forEach(s => new Notification("Ödeme Hatırlatması 🔔", { body: `${s.name} aboneliğinin ödeme günü geldi!` }));
                 }
             });
-            // Ayrıca uygulama içi uyarı ver
-            setTimeout(() => { alert(`🔔 ÖDEME GÜNÜ!\nBugün ${dueSubs.length} adet ödemen var:\n` + dueSubs.map(s=>`- ${s.name}`).join('\n')); }, 1000);
+            setTimeout(() => { alert(`🔔 ÖDEME GÜNÜ!\nBugün ${dueSubs.length} adet ödemen var.`); }, 1000);
         }
     }
-
-    function goPage(pid, btn) {
-        document.querySelectorAll('.page').forEach(p=>{p.style.display='none'; p.classList.remove('active')});
-        document.getElementById(pid).style.display='block';
-        if(btn){ document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
-        document.getElementById('mainHeader').style.display = (pid==='homePage')?'block':'none';
-        if(pid==='homePage') refreshAll(); if(pid==='calendarPage') renderCalendar(); if(pid==='assetsPage') refreshAssets(); if(pid==='listPage') renderShoppingList();
-    }
-
-    // --- FOTOĞRAF İŞLEMLERİ ---
     function handleImage(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
@@ -286,46 +305,30 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-    function showImage(src) {
-        document.getElementById('fullSizeImg').src = src;
-        viewImageModal.show();
-    }
+    function showImage(src) { document.getElementById('fullSizeImg').src = src; viewImageModal.show(); }
 
     // --- STANDART FONKSİYONLAR ---
+    function goPage(pid, btn) {
+        document.querySelectorAll('.page').forEach(p=>{p.style.display='none'; p.classList.remove('active')});
+        document.getElementById(pid).style.display='block';
+        if(btn){ document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
+        document.getElementById('mainHeader').style.display = (pid==='homePage')?'block':'none';
+        if(pid==='homePage') refreshAll(); if(pid==='calendarPage') renderCalendar(); if(pid==='assetsPage') refreshAssets(); if(pid==='listPage') renderShoppingList();
+    }
     function openTx(type){ 
-        menuModal.hide(); 
-        document.getElementById('txType').value = type; 
-        document.getElementById('txTitle').innerText = type==='gelir'?'GELİR EKLE':'GİDER EKLE'; 
-        const c=document.getElementById('txCat'); c.innerHTML=''; 
-        db.cats[type].forEach(x=>c.add(new Option(x,x))); 
+        menuModal.hide(); document.getElementById('txType').value = type; document.getElementById('txTitle').innerText = type==='gelir'?'GELİR EKLE':'GİDER EKLE'; 
+        const c=document.getElementById('txCat'); c.innerHTML=''; db.cats[type].forEach(x=>c.add(new Option(x,x))); 
         const a=document.getElementById('txAcc'); a.innerHTML=''; db.accs.forEach(x=>a.add(new Option(x.name,x.id))); 
-        document.getElementById('txAmt').value=''; 
-        document.getElementById('txDate').valueAsDate = new Date(); 
-        
-        // Resim sıfırla
-        currentTxImage = null;
-        document.getElementById('previewImg').style.display = 'none';
-        document.querySelector('.img-preview-box span').style.display = 'block';
-        document.getElementById('txFile').value = '';
-        
+        document.getElementById('txAmt').value=''; document.getElementById('txDate').valueAsDate = new Date(); 
+        currentTxImage = null; document.getElementById('previewImg').style.display = 'none'; document.querySelector('.img-preview-box span').style.display = 'block'; document.getElementById('txFile').value = '';
         txModal.show(); 
     }
-
     function saveTx(){ 
-        const a=parseFloat(document.getElementById('txAmt').value); if(!a)return; 
-        const typ=document.getElementById('txType').value; 
-        const tx={
-            id:Date.now(), type:typ, amt:a, 
-            accId:parseInt(document.getElementById('txAcc').value), 
-            date:document.getElementById('txDate').value, 
-            cat:document.getElementById('txCat').value, 
-            desc:document.getElementById('txDesc').value,
-            img: currentTxImage // Resmi kaydet
-        }; 
+        const a=parseFloat(document.getElementById('txAmt').value); if(!a)return; const typ=document.getElementById('txType').value; 
+        const tx={id:Date.now(), type:typ, amt:a, accId:parseInt(document.getElementById('txAcc').value), date:document.getElementById('txDate').value, cat:document.getElementById('txCat').value, desc:document.getElementById('txDesc').value, img: currentTxImage}; 
         const acc=db.accs.find(x=>x.id===tx.accId); if(acc) acc.bal+=(typ==='gelir'?a:-a); 
         db.txs.push(tx); saveDB(); txModal.hide(); refreshAll(); 
     }
-
     function refreshAll() {
         let i=0,e=0; db.txs.forEach(t=>{if(t.type==='gelir')i+=t.amt; else e+=t.amt;}); let walletTotal = 0; db.accs.forEach(a=>walletTotal+=a.bal);
         document.getElementById('dispNet').innerText=walletTotal.toFixed(2)+' ₺'; document.getElementById('dispInc').innerText=i.toFixed(0); document.getElementById('dispExp').innerText=e.toFixed(0);
@@ -334,34 +337,14 @@
         const aw=document.getElementById('accWrapper'); const addBtn=`<div class="add-acc-card" onclick="accModal.show()" style="display:inline-flex; align-items:center; justify-content:center; width:50px; height:100px; background:rgba(255,255,255,0.5); border-radius:20px; border:2px dashed #cbd5e1; cursor:pointer; vertical-align:top;"><i class="bi bi-plus-lg fs-3 text-muted"></i></div>`; aw.innerHTML=''; db.accs.forEach(a=>{ let ico='bi-wallet2'; if(a.type==='bank')ico='bi-bank'; if(a.type==='card')ico='bi-credit-card'; aw.innerHTML+=`<div class="acc-card"><div class="acc-del-btn" onclick="deleteAcc(${a.id})"><i class="bi bi-x"></i></div><div class="acc-icon"><i class="bi ${ico}"></i></div><div class="small fw-bold text-muted text-truncate">${a.name}</div><div class="fw-bold fs-5">${a.bal.toFixed(2)}₺</div></div>`; }); aw.innerHTML+=addBtn;
         renderList('recentList', db.txs.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5));
     }
-
     function renderList(tid, list) { 
-        const el=document.getElementById(tid); el.innerHTML=''; 
-        if(!list.length) el.innerHTML='<div class="text-center small text-muted my-3">Kayıt yok</div>'; 
+        const el=document.getElementById(tid); el.innerHTML=''; if(!list.length) el.innerHTML='<div class="text-center small text-muted my-3">Kayıt yok</div>'; 
         list.forEach(t=>{ 
             const isInc=t.type==='gelir'; 
-            el.innerHTML+=`<div class="tx-list-item">
-                <div class="d-flex align-items-center">
-                    <div class="icon-box" style="background:${isInc?'#dcfce7':'#fee2e2'}; color:${isInc?'#166534':'#991b1b'}"><i class="bi ${isInc?'bi-arrow-down':'bi-bag'}"></i></div>
-                    <div><div class="fw-bold">${t.cat}</div><small class="text-muted">${t.date}</small></div>
-                </div>
-                <div class="text-end d-flex align-items-center gap-2">
-                    ${t.img ? `<div class="img-icon-badge" onclick="showImage('${t.img}')"><i class="bi bi-image"></i></div>` : ''}
-                    <div class="fw-bold ${isInc?'text-success':'text-danger'}">${isInc?'+':'-'}${t.amt}₺</div>
-                </div>
-            </div>`; 
+            el.innerHTML+=`<div class="tx-list-item"><div class="d-flex align-items-center"><div class="icon-box" style="background:${isInc?'#dcfce7':'#fee2e2'}; color:${isInc?'#166534':'#991b1b'}"><i class="bi ${isInc?'bi-arrow-down':'bi-bag'}"></i></div><div><div class="fw-bold">${t.cat}</div><small class="text-muted">${t.date}</small></div></div><div class="text-end d-flex align-items-center gap-2">${t.img ? `<div class="img-icon-badge" onclick="showImage('${t.img}')"><i class="bi bi-image"></i></div>` : ''}<div class="fw-bold ${isInc?'text-success':'text-danger'}">${isInc?'+':'-'}${t.amt}₺</div></div></div>`; 
         }); 
     }
-
-    // --- DİĞER FONKSİYONLAR --- (V25 ile aynı)
-    function createPDF() {
-        const { jsPDF } = window.jspdf; const doc = new jsPDF();
-        const tr = (str) => str.replace(/ğ/g,'g').replace(/Ğ/g,'G').replace(/ş/g,'s').replace(/Ş/g,'S').replace(/ı/g,'i').replace(/İ/g,'I').replace(/ö/g,'o').replace(/Ö/g,'O').replace(/ü/g,'u').replace(/Ü/g,'U').replace(/ç/g,'c').replace(/Ç/g,'C');
-        doc.setFontSize(18); doc.text("FINANS PRO RAPORU", 14, 20);
-        const tableData = db.txs.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).map(t => [t.date, tr(t.cat), tr(t.desc || '-'), t.type === 'gelir' ? `+${t.amt}` : `-${t.amt}`]);
-        doc.autoTable({ head: [['Tarih', 'Kategori', 'Aciklama', 'Tutar']], body: tableData, startY: 30, theme: 'striped' });
-        doc.save('Rapor.pdf');
-    }
+    function createPDF() { const { jsPDF } = window.jspdf; const doc = new jsPDF(); const tr = (str) => str.replace(/ğ/g,'g').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ü/g,'u').replace(/ç/g,'c'); doc.setFontSize(18); doc.text("FINANS PRO RAPORU", 14, 20); const tableData = db.txs.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).map(t => [t.date, tr(t.cat), tr(t.desc || '-'), t.type === 'gelir' ? `+${t.amt}` : `-${t.amt}`]); doc.autoTable({ head: [['Tarih', 'Kategori', 'Aciklama', 'Tutar']], body: tableData, startY: 30, theme: 'striped' }); doc.save('Rapor.pdf'); }
     function openSubsModal() { settingsModal.hide(); subsModal.show(); renderSubs(); }
     function renderSubs() { const l = document.getElementById('subsList'); l.innerHTML = ''; if(!db.subs.length) l.innerHTML = '<div class="text-center text-muted small">Abonelik yok.</div>'; db.subs.forEach(s => { l.innerHTML += `<div class="sub-card"><div><div class="fw-bold">${s.name}</div><div class="small text-muted">Her ayın ${s.day}. günü • ${s.amt}₺</div></div><button class="btn btn-sm btn-outline-primary" onclick="paySub(${s.id})">Öde</button><i class="bi bi-trash3 text-danger ms-3" onclick="delSub(${s.id})" style="cursor:pointer"></i></div>`; }); }
     function saveSub() { const n = document.getElementById('subName').value; const a = parseFloat(document.getElementById('subAmt').value); const d = document.getElementById('subDay').value; if(n && a && d) { db.subs.push({id:Date.now(), name:n, amt:a, day:d}); saveDB(); renderSubs(); document.getElementById('subName').value=''; } }
@@ -385,7 +368,7 @@
     function applyTheme(theme) { document.documentElement.setAttribute('data-theme', theme); document.getElementById('themeIcon').className = theme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill'; }
     function saveBudget() { db.budget = parseFloat(document.getElementById('budgetLimitInp').value)||0; saveDB(); refreshAll(); settingsModal.hide(); }
     function saveDB(){localStorage.setItem(DB_KEY,JSON.stringify(db))}
-    function excelExport(){const ws=XLSX.utils.json_to_sheet(db.txs);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Data");XLSX.writeFile(wb,"FinansV28.xlsx")}
+    function excelExport(){const ws=XLSX.utils.json_to_sheet(db.txs);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Data");XLSX.writeFile(wb,"FinansV29.xlsx")}
     function initFilters(){const m=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"]; const sc=document.getElementById('calMonth'); m.forEach((x,i)=>{const o=new Option(x,i); if(i===new Date().getMonth())o.selected=true; sc.add(o);});}
     function addAccount(){ const n=document.getElementById('newAccName').value; if(n){db.accs.push({id:Date.now(), name:n, type:document.getElementById('newAccType').value, bal:parseFloat(document.getElementById('newAccBal').value)||0}); saveDB(); accModal.hide(); refreshAll();} }
     function deleteAcc(id){ if(confirm("Hesap Silinsin mi?")){db.accs=db.accs.filter(a=>a.id!==id); saveDB(); refreshAll();} }
