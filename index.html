@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Finans V30 (Final)</title>
+    <title>Finans V31 (Tam Kontrol)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -79,7 +79,7 @@
             <button class="icon-btn" onclick="settingsModal.show()"><i class="bi bi-gear-fill"></i></button>
             <button class="icon-btn" onclick="toggleTheme()"><i id="themeIcon" class="bi bi-moon-stars-fill"></i></button>
         </div>
-        <div class="small fw-bold opacity-75">V30 FINAL</div>
+        <div class="small fw-bold opacity-75">V31 TAM KONTROL</div>
     </div>
 
     <div class="text-center">
@@ -211,7 +211,7 @@
     <img id="fullSizeImg" class="rounded-4 shadow-lg w-100">
     <div class="d-flex gap-2 justify-content-center mt-3">
         <button class="btn btn-light rounded-pill fw-bold px-4" data-bs-dismiss="modal">Kapat</button>
-        <button class="btn btn-danger rounded-pill fw-bold px-4" onclick="deleteCurrentImage()"><i class="bi bi-trash"></i> Sil</button>
+        <button class="btn btn-danger rounded-pill fw-bold px-4" onclick="deleteCurrentImage()"><i class="bi bi-trash"></i> Resmi Sil</button>
     </div>
 </div></div></div></div>
 
@@ -221,7 +221,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
 <script>
-    const DB_KEY = 'finans_v30_db'; // V30 olarak güncelledim
+    const DB_KEY = 'finans_v31_db'; // KEY GÜNCELLENDİ (V31)
     let db = JSON.parse(localStorage.getItem(DB_KEY)) || { 
         txs: [], accs: [{id:1,name:'Nakit',type:'cash',bal:0}], 
         assets:[], shopping:[], subs:[], 
@@ -232,7 +232,7 @@
     let menuModal, txModal, accModal, assetModal, listModal, settingsModal, subsModal, catModal, viewImageModal;
     let currentCatEditType = 'gider';
     let currentTxImage = null;
-    let currentViewTxId = null; // Görüntülenen işlemin ID'sini tutmak için
+    let currentViewTxId = null;
 
     window.onload = function() {
         menuModal = new bootstrap.Modal(document.getElementById('menuModal'));
@@ -254,6 +254,39 @@
         initFilters(); refreshAll();
     };
 
+    // --- İŞLEM SİLME (YENİ) ---
+    function deleteTx(id) {
+        if(confirm('Bu işlemi silmek istediğine emin misin? Bakiye düzeltilecek.')) {
+            const tx = db.txs.find(t => t.id === id);
+            if(tx) {
+                // Bakiyeyi geri al
+                const acc = db.accs.find(a => a.id === tx.accId);
+                if(acc) {
+                    if(tx.type === 'gelir') acc.bal -= tx.amt;
+                    else acc.bal += tx.amt;
+                }
+                // Listeden çıkar
+                db.txs = db.txs.filter(t => t.id !== id);
+                saveDB();
+                refreshAll();
+                // Takvim açıksa orayı da güncelle
+                if(document.getElementById('calendarPage').style.display === 'block') {
+                    renderCalendar();
+                    document.getElementById('dayDetail').classList.add('d-none');
+                }
+            }
+        }
+    }
+
+    // --- RESİM SİLME ---
+    function deleteCurrentImage() {
+        if(!currentViewTxId) return;
+        if(confirm('Sadece bu fotoğrafı silmek istediğine emin misin?')) {
+            const tx = db.txs.find(t => t.id === currentViewTxId);
+            if(tx) { tx.img = null; saveDB(); viewImageModal.hide(); refreshAll(); }
+        }
+    }
+
     // --- YEDEKLEME & SIFIRLAMA ---
     function backupData() {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
@@ -272,33 +305,14 @@
             try {
                 const data = JSON.parse(e.target.result);
                 if(data && data.txs) {
-                    if(confirm('DİKKAT! Mevcut veriler silinip yedek dosyasındaki veriler yüklenecek. Emin misin?')) {
-                        db = data; saveDB(); location.reload();
-                    }
-                } else { alert('Hatalı yedek dosyası!'); }
+                    if(confirm('DİKKAT! Mevcut veriler silinip yedek yüklenecek.')) { db = data; saveDB(); location.reload(); }
+                } else { alert('Hatalı dosya!'); }
             } catch(err) { alert('Dosya okunamadı!'); }
         };
         reader.readAsText(file);
     }
     function resetData() {
-        if(confirm('⚠️ DİKKAT!\n\nTüm harcamalar, varlıklar ve ayarlar KALICI OLARAK SİLİNECEK.\n\nOnaylıyor musun?')) {
-            localStorage.removeItem(DB_KEY);
-            location.reload();
-        }
-    }
-
-    // --- RESİM SİLME (YENİ) ---
-    function deleteCurrentImage() {
-        if(!currentViewTxId) return;
-        if(confirm('Sadece bu fotoğrafı silmek istediğine emin misin?')) {
-            const tx = db.txs.find(t => t.id === currentViewTxId);
-            if(tx) {
-                tx.img = null; // Resmi kaldır
-                saveDB();
-                viewImageModal.hide();
-                refreshAll(); // Listeyi güncelle
-            }
-        }
+        if(confirm('⚠️ TÜM VERİLER SİLİNECEK! Emin misin?')) { localStorage.removeItem(DB_KEY); location.reload(); }
     }
 
     // --- BİLDİRİM & FOTOĞRAF ---
@@ -308,9 +322,7 @@
         const dueSubs = db.subs.filter(s => parseInt(s.day) === today);
         if (dueSubs.length > 0) {
             Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    dueSubs.forEach(s => new Notification("Ödeme Hatırlatması 🔔", { body: `${s.name} aboneliğinin ödeme günü geldi!` }));
-                }
+                if (permission === "granted") { dueSubs.forEach(s => new Notification("Ödeme Hatırlatması", { body: `${s.name} ödemesi var!` })); }
             });
             setTimeout(() => { alert(`🔔 ÖDEME GÜNÜ!\nBugün ${dueSubs.length} adet ödemen var.`); }, 1000);
         }
@@ -328,11 +340,7 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-    function showImage(id, src) { 
-        currentViewTxId = id; // Hangi işlem olduğunu kaydet
-        document.getElementById('fullSizeImg').src = src; 
-        viewImageModal.show(); 
-    }
+    function showImage(id, src) { currentViewTxId = id; document.getElementById('fullSizeImg').src = src; viewImageModal.show(); }
 
     // --- STANDART FONKSİYONLAR ---
     function goPage(pid, btn) {
@@ -368,7 +376,17 @@
         const el=document.getElementById(tid); el.innerHTML=''; if(!list.length) el.innerHTML='<div class="text-center small text-muted my-3">Kayıt yok</div>'; 
         list.forEach(t=>{ 
             const isInc=t.type==='gelir'; 
-            el.innerHTML+=`<div class="tx-list-item"><div class="d-flex align-items-center"><div class="icon-box" style="background:${isInc?'#dcfce7':'#fee2e2'}; color:${isInc?'#166534':'#991b1b'}"><i class="bi ${isInc?'bi-arrow-down':'bi-bag'}"></i></div><div><div class="fw-bold">${t.cat}</div><small class="text-muted">${t.date}</small></div></div><div class="text-end d-flex align-items-center gap-2">${t.img ? `<div class="img-icon-badge" onclick="showImage(${t.id}, '${t.img}')"><i class="bi bi-image"></i></div>` : ''}<div class="fw-bold ${isInc?'text-success':'text-danger'}">${isInc?'+':'-'}${t.amt}₺</div></div></div>`; 
+            el.innerHTML+=`<div class="tx-list-item">
+                <div class="d-flex align-items-center">
+                    <div class="icon-box" style="background:${isInc?'#dcfce7':'#fee2e2'}; color:${isInc?'#166534':'#991b1b'}"><i class="bi ${isInc?'bi-arrow-down':'bi-bag'}"></i></div>
+                    <div><div class="fw-bold">${t.cat}</div><small class="text-muted">${t.date}</small></div>
+                </div>
+                <div class="text-end d-flex align-items-center gap-2">
+                    ${t.img ? `<div class="img-icon-badge" onclick="showImage(${t.id}, '${t.img}')"><i class="bi bi-image"></i></div>` : ''}
+                    <div class="fw-bold ${isInc?'text-success':'text-danger'}">${isInc?'+':'-'}${t.amt}₺</div>
+                    <i class="bi bi-trash3 text-danger fs-5 ms-3" onclick="deleteTx(${t.id})" style="cursor:pointer"></i>
+                </div>
+            </div>`; 
         }); 
     }
     function createPDF() { const { jsPDF } = window.jspdf; const doc = new jsPDF(); const tr = (str) => str.replace(/ğ/g,'g').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ü/g,'u').replace(/ç/g,'c'); doc.setFontSize(18); doc.text("FINANS PRO RAPORU", 14, 20); const tableData = db.txs.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).map(t => [t.date, tr(t.cat), tr(t.desc || '-'), t.type === 'gelir' ? `+${t.amt}` : `-${t.amt}`]); doc.autoTable({ head: [['Tarih', 'Kategori', 'Aciklama', 'Tutar']], body: tableData, startY: 30, theme: 'striped' }); doc.save('Rapor.pdf'); }
@@ -382,7 +400,23 @@
     function addCat() { const n = document.getElementById('newCatName').value; if(n && !db.cats[currentCatEditType].includes(n)) { db.cats[currentCatEditType].push(n); saveDB(); renderCatEdit(currentCatEditType); document.getElementById('newCatName').value = ''; } }
     function delCat(name) { if(confirm('Kategori silinsin mi?')) { db.cats[currentCatEditType] = db.cats[currentCatEditType].filter(c => c !== name); saveDB(); renderCatEdit(currentCatEditType); } }
     function renderCalendar() { const grid = document.getElementById('calGrid'); grid.innerHTML = ''; const m = parseInt(document.getElementById('calMonth').value); const y = new Date().getFullYear(); const daysInMonth = new Date(y, m + 1, 0).getDate(); const firstDay = new Date(y, m, 1).getDay(); ['Pz','Pt','Sa','Ça','Pe','Cu','Ct'].forEach(d => grid.innerHTML += `<div class="cal-day-header">${d}</div>`); for(let i=0; i<firstDay; i++) grid.innerHTML += `<div></div>`; for(let d=1; d<=daysInMonth; d++) { const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; const hasTx = db.txs.some(t => t.date === dateStr); grid.innerHTML += `<div class="cal-day ${hasTx?'has-tx':''}" onclick="showDayDetails('${dateStr}', this)">${d}</div>`; } renderCatStats(m); }
-    function showDayDetails(date, el) { document.querySelectorAll('.cal-day').forEach(d=>d.classList.remove('active')); if(el) el.classList.add('active'); const list = db.txs.filter(t => t.date === date); const ul = document.getElementById('dayTxList'); document.getElementById('dayDetail').classList.remove('d-none'); ul.innerHTML = ''; if(!list.length) ul.innerHTML = '<small class="text-muted">İşlem yok.</small>'; list.forEach(t => { ul.innerHTML += `<div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded bg-light border"><div class="small fw-bold">${t.cat}</div><div class="fw-bold ${t.type==='gelir'?'text-success':'text-danger'}">${t.amt}₺</div></div>`; }); }
+    function showDayDetails(date, el) { 
+        document.querySelectorAll('.cal-day').forEach(d=>d.classList.remove('active')); if(el) el.classList.add('active'); 
+        const list = db.txs.filter(t => t.date === date); 
+        const ul = document.getElementById('dayTxList'); 
+        document.getElementById('dayDetail').classList.remove('d-none'); 
+        ul.innerHTML = ''; 
+        if(!list.length) ul.innerHTML = '<small class="text-muted">İşlem yok.</small>'; 
+        list.forEach(t => { 
+            ul.innerHTML += `<div class="d-flex justify-content-between align-items-center mb-2 p-2 rounded bg-light border">
+                <div><div class="small fw-bold">${t.cat}</div></div>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="fw-bold ${t.type==='gelir'?'text-success':'text-danger'}">${t.amt}₺</div>
+                    <i class="bi bi-trash3 text-danger small" onclick="deleteTx(${t.id})"></i>
+                </div>
+            </div>`; 
+        }); 
+    }
     function renderCatStats(month) { const statsDiv = document.getElementById('catStatsList'); statsDiv.innerHTML = ''; const monthTxs = db.txs.filter(t => new Date(t.date).getMonth() === month && t.type === 'gider'); const totalExp = monthTxs.reduce((a,b) => a+b.amt, 0); if(totalExp === 0) { statsDiv.innerHTML = '<div class="text-center text-muted">Bu ay harcama yok.</div>'; return; } const cats = {}; monthTxs.forEach(t => { cats[t.cat] = (cats[t.cat] || 0) + t.amt; }); Object.keys(cats).sort((a,b)=>cats[b]-cats[a]).forEach(c => { const pct = (cats[c] / totalExp) * 100; statsDiv.innerHTML += `<div class="stat-row"><div class="d-flex justify-content-between small fw-bold"><span>${c}</span><span>${cats[c]}₺ (%${pct.toFixed(0)})</span></div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:${pct}%"></div></div></div>`; }); }
     function renderShoppingList() { const l = document.getElementById('shoppingList'); l.innerHTML = ''; if(!db.shopping.length) l.innerHTML = '<div class="text-center text-muted mt-5">Listen boş</div>'; db.shopping.sort((a,b) => a.done - b.done).forEach(i => { l.innerHTML += `<div class="shop-item ${i.done?'checked':''}" onclick="toggleItem(${i.id})"><div class="check-circle"><i class="bi bi-check"></i></div><div class="flex-grow-1 fw-bold">${i.text}</div><i class="bi bi-x-circle text-danger fs-5" onclick="event.stopPropagation(); deleteItem(${i.id})"></i></div>`; }); }
     function saveListItem() { const t=document.getElementById('listItemName').value; if(t){db.shopping.push({id:Date.now(), text:t, done:false}); saveDB(); listModal.hide(); renderShoppingList(); document.getElementById('listItemName').value='';} }
@@ -395,7 +429,7 @@
     function applyTheme(theme) { document.documentElement.setAttribute('data-theme', theme); document.getElementById('themeIcon').className = theme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill'; }
     function saveBudget() { db.budget = parseFloat(document.getElementById('budgetLimitInp').value)||0; saveDB(); refreshAll(); settingsModal.hide(); }
     function saveDB(){localStorage.setItem(DB_KEY,JSON.stringify(db))}
-    function excelExport(){const ws=XLSX.utils.json_to_sheet(db.txs);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Data");XLSX.writeFile(wb,"FinansV30.xlsx")}
+    function excelExport(){const ws=XLSX.utils.json_to_sheet(db.txs);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Data");XLSX.writeFile(wb,"FinansV31.xlsx")}
     function initFilters(){const m=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"]; const sc=document.getElementById('calMonth'); m.forEach((x,i)=>{const o=new Option(x,i); if(i===new Date().getMonth())o.selected=true; sc.add(o);});}
     function addAccount(){ const n=document.getElementById('newAccName').value; if(n){db.accs.push({id:Date.now(), name:n, type:document.getElementById('newAccType').value, bal:parseFloat(document.getElementById('newAccBal').value)||0}); saveDB(); accModal.hide(); refreshAll();} }
     function deleteAcc(id){ if(confirm("Hesap Silinsin mi?")){db.accs=db.accs.filter(a=>a.id!==id); saveDB(); refreshAll();} }
