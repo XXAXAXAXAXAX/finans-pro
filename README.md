@@ -1,63 +1,61 @@
-# 🚀 Finans Pro V29 - Kişisel Finans Asistanı
+# 🚀 Finans Pro V31 - Kişisel Finans Asistanı (Tam Kontrol)
 
-**Finans Pro**, harcamalarınızı, gelirlerinizi, varlıklarınızı ve aboneliklerinizi tek bir yerden yönetmenizi sağlayan; tamamen tarayıcı tabanlı, güvenli ve modern bir finans uygulamasıdır. 
+**Finans Pro**, harcamalarınızı, gelirlerinizi, varlıklarınızı ve aboneliklerinizi tek bir yerden yönetmenizi sağlayan; tamamen tarayıcı tabanlı, güvenli ve modern bir finans uygulamasıdır.
+
+Bu sürüm (**V31**), kullanıcıya verileri üzerinde **%100 kontrol** (silme, düzenleme, sıfırlama) imkanı tanır.
 
 Verileriniz hiçbir sunucuya gitmez, **tamamen sizin cihazınızda (LocalStorage) saklanır.** 🔒
 
-## ✨ Özellikler
+## ✨ V31 ile Gelen Yenilikler & Özellikler
 
-Bu sürüm (V29), kullanıcı deneyimini ve veri güvenliğini en üst düzeye çıkaran özelliklerle donatılmıştır:
+### 🗑️ Tam Kontrol (Silme & Düzenleme)
+* **İşlem Silme:** Yanlış girdiğiniz bir harcamayı veya geliri listedeki **Çöp Kutusu** ikonuna basarak silebilirsiniz. Silinen tutar, cüzdan bakiyenize otomatik olarak iade edilir.
+* **Fotoğraf Silme:** Harcamaya eklediğiniz fiş fotoğrafını beğenmediniz mi? İşlemi silmeden sadece fotoğrafı kaldırabilirsiniz.
+* **Fabrika Ayarları:** Ayarlar menüsünden tek tuşla tüm verileri sıfırlayarak temiz bir sayfa açabilirsiniz.
 
-### 🛡️ Güvenlik & Veri Yönetimi
-* **📥 Yedekleme Sistemi:** Tek tıkla tüm verilerinizi (resimler dahil) cihazınıza `.json` dosyası olarak indirin.
-* **📤 Geri Yükleme:** İndirdiğiniz yedeği seçerek verilerinizi başka bir cihaza veya tarayıcıya kolayca taşıyın.
-* **🔒 %100 Gizlilik:** Verileriniz asla internete yüklenmez, sadece sizin telefonunuzda kalır.
+### 🛡️ Güvenlik & Yedekleme
+* **📥 Yedek Al (Backup):** Telefon değiştirecekseniz veya verilerinizi saklamak istiyorsanız, tek tıkla **.json** formatında yedeğinizi indirin.
+* **📤 Yedek Yükle (Restore):** İndirdiğiniz yedeği seçerek eski verilerinizi saniyeler içinde geri yükleyin.
 
-### 📸 Gelişmiş Harcama Takibi
-* **Fatura/Fiş Ekleme:** Harcama girerken kamerayı açın ve fişin fotoğrafını ekleyin. Dijital arşiviniz olsun.
-* **Detaylı Kategoriler:** Gelir ve giderlerinizi (Market, Ulaşım, Fatura vb.) kategorize edin.
-* **Akıllı Takvim:** Hangi gün ne kadar harcadığınızı takvim üzerinde görün.
+### 📸 Dijital Fiş Arşivi
+* **Fotoğraf Ekleme:** Harcama girerken fişin veya faturanın fotoğrafını çekip ekleyin.
+* **Önizleme:** Listede fotoğrafı olan işlemler işaretlenir, üzerine tıklayınca tam ekran açılır.
 
-### 🔔 Abonelik & Hatırlatıcılar
-* **Abonelik Yöneticisi:** Netflix, Spotify, Kira gibi tekrarlayan ödemelerinizi kaydedin.
-* **Ödeme Bildirimleri:** Ödeme günü geldiğinde tarayıcınız size bildirim göndersin, gecikme faizi ödemeyin!
+### 🔔 Abonelik & Bildirimler
+* **Abonelik Yöneticisi:** Netflix, Spotify, Kira gibi tekrarlayan ödemeleri kaydedin.
+* **Akıllı Bildirimler:** Ödeme günü geldiğinde (uygulama açıksa) tarayıcınız size sesli/görsel bildirim gönderir.
 
 ### 📊 Raporlama & Analiz
-* **📄 PDF Raporu:** Harcamalarınızı resmi bir döküman gibi şık bir PDF olarak indirin.
+* **📄 PDF Raporu:** Harcamalarınızı banka ekstresi tadında, şık bir PDF olarak indirin.
 * **📈 Excel Çıktısı:** Verilerinizi detaylı analiz için Excel formatında dışa aktarın.
-* **💰 Varlık Yönetimi:** Altın, Döviz ve Nakit varlıklarınızı ekleyin, toplam servetinizi anlık görün.
-
-### 🎨 Kullanıcı Deneyimi
-* **🌙 Gece/Gündüz Modu:** Göz yormayan karanlık mod desteği.
-* **Mobil Uyumlu Tasarım:** Telefonda yerel bir uygulama (App) gibi çalışır.
-* **Hızlı Bütçe Çubuğu:** Aylık limitinizi belirleyin, harcamalarınız arttıkça renkli uyarılar alın.
+* **📅 Takvim Analizi:** Hangi gün ne kadar harcadığınızı takvim üzerinde renklendirilmiş olarak görün.
 
 ---
 
 ## 🚀 Nasıl Kullanılır?
 
-Bu proje herhangi bir kurulum veya sunucu gerektirmez!
+Bu proje herhangi bir kurulum, üyelik veya sunucu gerektirmez!
 
-1.  Bu depodaki (repository) kodları indirin.
-2.  `index.html` dosyasına çift tıklayın.
-3.  Uygulama tarayıcınızda açılacaktır. Hepsi bu kadar!
+1.  Bu depodaki (repository) kodları indirin (ZIP olarak veya Clone yapın).
+2.  `index.html` dosyasını telefonunuzda veya bilgisayarınızda açın.
+3.  Uygulama tarayıcınızda çalışmaya başlayacaktır. Hepsi bu kadar!
 
-*Alternatif:* GitHub Pages üzerinden direkt online olarak da kullanabilirsiniz.
+*İpucu: iPhone'da Safari'den, Android'de Chrome'dan "Ana Ekrana Ekle" diyerek bir uygulama gibi kullanabilirsiniz.*
 
 ---
 
 ## 🛠️ Kullanılan Teknolojiler
 
-* **HTML5 & CSS3:** Modern arayüz tasarımı.
-* **Bootstrap 5:** Responsive (mobil uyumlu) yapı.
-* **JavaScript (Vanilla):** Tüm mantık, veritabanı ve hesaplamalar.
-* **LocalStorage:** Veri saklama teknolojisi.
-* **jsPDF & SheetJS:** Raporlama araçları.
+* **HTML5 & CSS3:** Modern, responsive ve şık arayüz.
+* **Bootstrap 5:** Mobil uyumluluk ve bileşenler.
+* **JavaScript (Vanilla):** Tüm finansal hesaplamalar ve mantık.
+* **LocalStorage:** Veritabanı olarak tarayıcı hafızası.
+* **jsPDF & SheetJS:** Raporlama kütüphaneleri.
 
 ---
 
 ## ⚠️ Önemli Not
-Tarayıcı geçmişinizi temizlerseniz verileriniz silinebilir. Bu yüzden **Ayarlar > Yedekleme** menüsünden düzenli olarak "Yedeği İndir" yapmanız önerilir.
+Tarayıcı geçmişinizi (çerezleri/önbelleği) tamamen temizlerseniz verileriniz silinebilir. Bu yüzden **Ayarlar > Yedekleme** menüsünden düzenli olarak **"Yedeği İndir"** yapmanız önerilir.
 
 ---
 
