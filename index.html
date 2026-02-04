@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Finans V29 (Güvenli)</title>
+    <title>Finans V30 (Final)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -79,7 +79,7 @@
             <button class="icon-btn" onclick="settingsModal.show()"><i class="bi bi-gear-fill"></i></button>
             <button class="icon-btn" onclick="toggleTheme()"><i id="themeIcon" class="bi bi-moon-stars-fill"></i></button>
         </div>
-        <div class="small fw-bold opacity-75">V29 GÜVENLİ</div>
+        <div class="small fw-bold opacity-75">V30 FINAL</div>
     </div>
 
     <div class="text-center">
@@ -164,9 +164,10 @@
     <button class="btn btn-outline-danger w-100 fw-bold mb-2" onclick="createPDF()">📄 PDF Raporu İndir</button>
     <button class="btn btn-outline-success w-100 fw-bold mb-2" onclick="excelExport()">📊 Excel İndir</button>
     <hr>
-    <h6 class="fw-bold text-primary mb-3">Yedekleme (Güvenlik)</h6>
+    <h6 class="fw-bold text-primary mb-3">Yedekleme & Sıfırlama</h6>
     <button class="btn btn-dark w-100 fw-bold mb-2" onclick="backupData()">📥 Yedeği İndir (Sakla)</button>
     <button class="btn btn-outline-dark w-100 fw-bold mb-2" onclick="triggerRestore()">📤 Yedek Yükle (Geri Getir)</button>
+    <button class="btn btn-danger w-100 fw-bold mb-2" onclick="resetData()">⚠️ TÜM VERİLERİ SİL</button>
     <input type="file" id="restoreInput" hidden onchange="restoreData(this)" accept=".json">
     <hr>
     <h6 class="fw-bold text-primary mb-2">Bütçe Limiti</h6>
@@ -206,7 +207,13 @@
 
 <div class="modal fade" id="accModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header border-0"><h5 class="fw-bold">Yeni Hesap</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="text" id="newAccName" class="form-control mb-3 fw-bold" placeholder="Adı"><select id="newAccType" class="form-select mb-3"><option value="bank">Banka</option><option value="card">Kart</option><option value="cash">Nakit</option></select><input type="number" id="newAccBal" class="form-control fw-bold" placeholder="Bakiye"></div><div class="modal-footer border-0"><button onclick="addAccount()" class="btn btn-primary w-100 fw-bold">OLUŞTUR</button></div></div></div></div>
 
-<div class="modal fade" id="viewImageModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content bg-transparent border-0 text-center"><img id="fullSizeImg" class="rounded-4 shadow-lg w-100"><button class="btn btn-light rounded-pill mt-3 fw-bold px-4" data-bs-dismiss="modal">Kapat</button></div></div></div></div>
+<div class="modal fade" id="viewImageModal"><div class="modal-dialog modal-dialog-centered"><div class="modal-content bg-transparent border-0 text-center">
+    <img id="fullSizeImg" class="rounded-4 shadow-lg w-100">
+    <div class="d-flex gap-2 justify-content-center mt-3">
+        <button class="btn btn-light rounded-pill fw-bold px-4" data-bs-dismiss="modal">Kapat</button>
+        <button class="btn btn-danger rounded-pill fw-bold px-4" onclick="deleteCurrentImage()"><i class="bi bi-trash"></i> Sil</button>
+    </div>
+</div></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
@@ -214,7 +221,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
 <script>
-    const DB_KEY = 'finans_v29_db'; // KEY GÜNCELLENDİ
+    const DB_KEY = 'finans_v30_db'; // V30 olarak güncelledim
     let db = JSON.parse(localStorage.getItem(DB_KEY)) || { 
         txs: [], accs: [{id:1,name:'Nakit',type:'cash',bal:0}], 
         assets:[], shopping:[], subs:[], 
@@ -225,6 +232,7 @@
     let menuModal, txModal, accModal, assetModal, listModal, settingsModal, subsModal, catModal, viewImageModal;
     let currentCatEditType = 'gider';
     let currentTxImage = null;
+    let currentViewTxId = null; // Görüntülenen işlemin ID'sini tutmak için
 
     window.onload = function() {
         menuModal = new bootstrap.Modal(document.getElementById('menuModal'));
@@ -246,7 +254,7 @@
         initFilters(); refreshAll();
     };
 
-    // --- YEDEKLEME SİSTEMİ (YENİ) ---
+    // --- YEDEKLEME & SIFIRLAMA ---
     function backupData() {
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
         const downloadAnchorNode = document.createElement('a');
@@ -256,26 +264,41 @@
         downloadAnchorNode.click();
         downloadAnchorNode.remove();
     }
-
     function triggerRestore() { document.getElementById('restoreInput').click(); }
-
     function restoreData(input) {
-        const file = input.files[0];
-        if(!file) return;
+        const file = input.files[0]; if(!file) return;
         const reader = new FileReader();
         reader.onload = function(e) {
             try {
                 const data = JSON.parse(e.target.result);
                 if(data && data.txs) {
                     if(confirm('DİKKAT! Mevcut veriler silinip yedek dosyasındaki veriler yüklenecek. Emin misin?')) {
-                        db = data;
-                        saveDB();
-                        location.reload();
+                        db = data; saveDB(); location.reload();
                     }
                 } else { alert('Hatalı yedek dosyası!'); }
             } catch(err) { alert('Dosya okunamadı!'); }
         };
         reader.readAsText(file);
+    }
+    function resetData() {
+        if(confirm('⚠️ DİKKAT!\n\nTüm harcamalar, varlıklar ve ayarlar KALICI OLARAK SİLİNECEK.\n\nOnaylıyor musun?')) {
+            localStorage.removeItem(DB_KEY);
+            location.reload();
+        }
+    }
+
+    // --- RESİM SİLME (YENİ) ---
+    function deleteCurrentImage() {
+        if(!currentViewTxId) return;
+        if(confirm('Sadece bu fotoğrafı silmek istediğine emin misin?')) {
+            const tx = db.txs.find(t => t.id === currentViewTxId);
+            if(tx) {
+                tx.img = null; // Resmi kaldır
+                saveDB();
+                viewImageModal.hide();
+                refreshAll(); // Listeyi güncelle
+            }
+        }
     }
 
     // --- BİLDİRİM & FOTOĞRAF ---
@@ -305,7 +328,11 @@
             reader.readAsDataURL(input.files[0]);
         }
     }
-    function showImage(src) { document.getElementById('fullSizeImg').src = src; viewImageModal.show(); }
+    function showImage(id, src) { 
+        currentViewTxId = id; // Hangi işlem olduğunu kaydet
+        document.getElementById('fullSizeImg').src = src; 
+        viewImageModal.show(); 
+    }
 
     // --- STANDART FONKSİYONLAR ---
     function goPage(pid, btn) {
@@ -341,7 +368,7 @@
         const el=document.getElementById(tid); el.innerHTML=''; if(!list.length) el.innerHTML='<div class="text-center small text-muted my-3">Kayıt yok</div>'; 
         list.forEach(t=>{ 
             const isInc=t.type==='gelir'; 
-            el.innerHTML+=`<div class="tx-list-item"><div class="d-flex align-items-center"><div class="icon-box" style="background:${isInc?'#dcfce7':'#fee2e2'}; color:${isInc?'#166534':'#991b1b'}"><i class="bi ${isInc?'bi-arrow-down':'bi-bag'}"></i></div><div><div class="fw-bold">${t.cat}</div><small class="text-muted">${t.date}</small></div></div><div class="text-end d-flex align-items-center gap-2">${t.img ? `<div class="img-icon-badge" onclick="showImage('${t.img}')"><i class="bi bi-image"></i></div>` : ''}<div class="fw-bold ${isInc?'text-success':'text-danger'}">${isInc?'+':'-'}${t.amt}₺</div></div></div>`; 
+            el.innerHTML+=`<div class="tx-list-item"><div class="d-flex align-items-center"><div class="icon-box" style="background:${isInc?'#dcfce7':'#fee2e2'}; color:${isInc?'#166534':'#991b1b'}"><i class="bi ${isInc?'bi-arrow-down':'bi-bag'}"></i></div><div><div class="fw-bold">${t.cat}</div><small class="text-muted">${t.date}</small></div></div><div class="text-end d-flex align-items-center gap-2">${t.img ? `<div class="img-icon-badge" onclick="showImage(${t.id}, '${t.img}')"><i class="bi bi-image"></i></div>` : ''}<div class="fw-bold ${isInc?'text-success':'text-danger'}">${isInc?'+':'-'}${t.amt}₺</div></div></div>`; 
         }); 
     }
     function createPDF() { const { jsPDF } = window.jspdf; const doc = new jsPDF(); const tr = (str) => str.replace(/ğ/g,'g').replace(/ş/g,'s').replace(/ı/g,'i').replace(/ö/g,'o').replace(/ü/g,'u').replace(/ç/g,'c'); doc.setFontSize(18); doc.text("FINANS PRO RAPORU", 14, 20); const tableData = db.txs.slice().sort((a,b)=>new Date(b.date)-new Date(a.date)).map(t => [t.date, tr(t.cat), tr(t.desc || '-'), t.type === 'gelir' ? `+${t.amt}` : `-${t.amt}`]); doc.autoTable({ head: [['Tarih', 'Kategori', 'Aciklama', 'Tutar']], body: tableData, startY: 30, theme: 'striped' }); doc.save('Rapor.pdf'); }
@@ -368,7 +395,7 @@
     function applyTheme(theme) { document.documentElement.setAttribute('data-theme', theme); document.getElementById('themeIcon').className = theme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-stars-fill'; }
     function saveBudget() { db.budget = parseFloat(document.getElementById('budgetLimitInp').value)||0; saveDB(); refreshAll(); settingsModal.hide(); }
     function saveDB(){localStorage.setItem(DB_KEY,JSON.stringify(db))}
-    function excelExport(){const ws=XLSX.utils.json_to_sheet(db.txs);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Data");XLSX.writeFile(wb,"FinansV29.xlsx")}
+    function excelExport(){const ws=XLSX.utils.json_to_sheet(db.txs);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Data");XLSX.writeFile(wb,"FinansV30.xlsx")}
     function initFilters(){const m=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"]; const sc=document.getElementById('calMonth'); m.forEach((x,i)=>{const o=new Option(x,i); if(i===new Date().getMonth())o.selected=true; sc.add(o);});}
     function addAccount(){ const n=document.getElementById('newAccName').value; if(n){db.accs.push({id:Date.now(), name:n, type:document.getElementById('newAccType').value, bal:parseFloat(document.getElementById('newAccBal').value)||0}); saveDB(); accModal.hide(); refreshAll();} }
     function deleteAcc(id){ if(confirm("Hesap Silinsin mi?")){db.accs=db.accs.filter(a=>a.id!==id); saveDB(); refreshAll();} }
